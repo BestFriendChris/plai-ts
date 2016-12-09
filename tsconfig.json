@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "outDir": "./lib",
+    "preserveConstEnums": true,
+    "removeComments": true
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*-spec.ts"
+  ]
+}
