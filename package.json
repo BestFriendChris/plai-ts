@@ -14,27 +14,36 @@
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
-    "clean": "rimraf lib",
+    "clean": "rimraf lib && echo 'cleaned: lib'",
 
     "lint": "npm-run-all -p lint:*",
     "lint:src": "npm run -s _run:lint -- 'src/**/*.ts' && echo 'no lint errors: src'",
     "lint:test": "npm run -s _run:lint -- 'test/**/*.ts' && echo 'no lint errors: test'",
 
-    "build": "npm-run-all -l lint:src clean compile",
+    "build": "npm-run-all -l lint:src clean pegjs compile",
+
     "compile": "npm run -s _run:tsc && echo 'compile successful!'",
     "compile:verbose": "echo 'compiling' && npm run -s compile",
 
-    "test": "npm run -s _run:tape -- test/**/*-spec.ts | FORCE_COLOR=true tap-dot",
+    "pegjs": "npm-run-all pegjs:compile pegjs:copy",
+    "pegjs:verbose": "echo 'Running pegjs' && npm run -s pegjs",
+    "pegjs:compile": "npm run -s _run:pegjs -- src/parser/grammar.pegjs && echo 'pegjs successful!'",
+    "old:pegjs:copy": "mkdirp lib/parser; cp src/parser/grammar.js lib/parser/; cp src/parser/grammar.d.ts lib/parser/",
+    "pegjs:copy": "mkdirp lib/parser; cp src/parser/*.js lib/parser/; cp src/parser/*.d.ts lib/parser/",
+
+    "test": "npm run -s _run:tape -- test/**/*-test.ts | FORCE_COLOR=true tap-dot",
     "test:verbose": "echo 'Running tests' && npm run -s test",
 
     "watch": "npm-run-all -l -p watch:*",
     "watch:lint": "npm-run-all -p watch:lint:*",
     "watch:lint:src": "npm run -s _run:onchange -- 'src/**/*.ts' -- npm run lint:src",
     "watch:lint:test": "npm run -s _run:onchange -- 'test/**/*.ts' -- npm run lint:test",
-    "watch:compile": "npm run -s _run:onchange -- -d 500 'src/**/*.ts' -- npm-run-all clean compile:verbose",
+    "watch:pegjs": "npm run -s _run:onchange -- 'src/**/*.pegjs' -- npm-run-all pegjs:verbose",
+    "watch:compile": "npm run -s _run:onchange -- -d 500 'src/**/*.ts' -- npm-run-all clean pegjs:copy compile:verbose",
     "watch:test": "npm run -s _run:onchange -- 'test/**/*.ts' -- npm run -s test:verbose",
 
     "_run:lint": "FORCE_COLOR=true tslint --formatters-dir node_modules/custom-tslint-formatters/formatters --format grouped",
+    "_run:pegjs": "pegjs",
     "_run:tsc": "tsc --pretty",
     "_run:tape": "tape -r ts-node/register",
     "_run:onchange": "onchange -i"
@@ -42,11 +51,14 @@
   "dependencies": {},
   "devDependencies": {
     "@types/node": "6.0.31",
+    "@types/pegjs": "^0.10.0",
     "@types/tape": "^4.2.28",
     "custom-tslint-formatters": "^2.0.0",
     "faucet": "0.0.1",
+    "mkdirp": "^0.5.1",
     "npm-run-all": "^3.1.2",
     "onchange": "^3.2.0",
+    "pegjs": "^0.10.0",
     "rimraf": "^2.5.4",
     "tap-dot": "^1.0.5",
     "tape": "^4.6.3",

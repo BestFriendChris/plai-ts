@@ -1,3 +1,4 @@
-import { Greeter } from "./greeter";
+import { parse } from "./parser/grammar";
 
-export { Greeter };
+/* tslint:disable:no-console */
+console.log(parse("(+ 1 2)"));
