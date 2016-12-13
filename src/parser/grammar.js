@@ -148,7 +148,7 @@ function peg$parse(input, options) {
       peg$c4 = peg$literalExpectation("(", false),
       peg$c5 = ")",
       peg$c6 = peg$literalExpectation(")", false),
-      peg$c7 = function(es) { return es; },
+      peg$c7 = function(es) { return makeApplication(es); },
       peg$c8 = function(t) { return t; },
       peg$c9 = "#t",
       peg$c10 = peg$literalExpectation("#t", false),
@@ -893,6 +893,13 @@ function peg$parse(input, options) {
     return s0;
   }
 
+
+    function makeApplication(es) {
+      return {
+        type: "application",
+        es: es
+      };
+    }
 
     function makeBool(b) {
       return {

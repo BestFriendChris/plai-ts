@@ -1,5 +1,12 @@
 // Borrowed from https://raw.githubusercontent.com/squaremo/scheme-in-js/master/grammar.pegjs
 {
+  function makeApplication(es) {
+    return {
+      type: "application",
+      es: es
+    };
+  }
+
   function makeBool(b) {
     return {
       type: "boolean",
@@ -34,7 +41,7 @@ start
 
 ws = [ \t\n]*
 
-expr = ws "(" ws es:expr* ws ")" { return es; }
+expr = ws "(" ws es:expr* ws ")" { return makeApplication(es); }
      / ws t:term { return t; }
 
 term = bool
