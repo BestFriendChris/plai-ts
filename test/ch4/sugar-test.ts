@@ -28,6 +28,13 @@ test("interp subtraction", (t) => {
   t.end();
 });
 
+test("interp unary minus", (t) => {
+  t.equals(interparse("(+ 10 (- 2))"), 8);
+  t.equals(interparse("(+ (- 10) (- 2))"), -12);
+
+  t.end();
+});
+
 test("interp mult", (t) => {
   t.equals(interparse("(* 1 2)"), 2);
   t.equals(interparse("(* 10 0)"), 0);

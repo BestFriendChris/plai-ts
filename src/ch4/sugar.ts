@@ -1,7 +1,7 @@
 import * as grammar from "../parser/grammar";
 import * as core from "./core";
 
-export type ArithS = INumS | IPlusS | IBMinusS | IMultS;
+export type ArithS = INumS | IPlusS | IUMinusS | IBMinusS | IMultS;
 
 export interface INumS {
   type: "numS";
@@ -18,6 +18,14 @@ export interface IPlusS {
 }
 export function plusS(l: ArithS, r: ArithS): IPlusS {
   return {type: "plusS", l, r};
+}
+
+export interface IUMinusS {
+  type: "uminusS";
+  e: ArithS;
+}
+export function uminusS(e: ArithS): IUMinusS {
+  return {type: "uminusS", e};
 }
 
 export interface IBMinusS {
@@ -44,6 +52,8 @@ export function desugar(a: ArithS): core.ArithC {
       return core.numC(a.n);
     case "plusS":
       return core.plusC(desugar(a.l), desugar(a.r));
+    case "uminusS":
+      return core.multC(core.numC(-1), desugar(a.e));
     case "bminusS":
       return core.plusC(desugar(a.l),
                         core.multC(core.numC(-1),
@@ -64,7 +74,13 @@ export function parseArithS(pt: grammar.ParseTree): ArithS {
           case "+":
             return plusS(parseArithS(pt.es[1]), parseArithS(pt.es[2]));
           case "-":
-            return bminusS(parseArithS(pt.es[1]), parseArithS(pt.es[2]));
+            if (pt.es.length === 3) {
+              return bminusS(parseArithS(pt.es[1]), parseArithS(pt.es[2]));
+            } else if (pt.es.length === 2) {
+              return uminusS(parseArithS(pt.es[1]));
+            } else {
+              throw "invalid number of arguments for negation";
+            }
           case "*":
             return multS(parseArithS(pt.es[1]), parseArithS(pt.es[2]));
           default:
